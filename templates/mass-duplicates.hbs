@@ -1,0 +1,199 @@
+<form class="npc-mass-duplicates">
+  <header class="npc-wizard-header">
+    <div class="npc-template-chip">
+      <i class="fa-solid fa-user"></i>
+      <span>{{localize "NPCNamePortrait.TemplateLabel"}}:</span>
+      <strong>{{templateName}}</strong>
+    </div>
+    <nav class="npc-steps" aria-label="{{localize "NPCNamePortrait.StepsLabel"}}">
+      <div class="npc-step {{#if stepSource}}active{{/if}} {{#if step1Done}}done{{/if}}">
+        <span>1</span><b>{{localize "NPCNamePortrait.StepSource"}}</b>
+      </div>
+      <i class="fa-solid fa-chevron-right"></i>
+      <div class="npc-step {{#if stepReview}}active{{/if}} {{#if step2Done}}done{{/if}}">
+        <span>2</span><b>{{localize "NPCNamePortrait.StepReview"}}</b>
+      </div>
+      <i class="fa-solid fa-chevron-right"></i>
+      <div class="npc-step {{#if stepCreate}}active{{/if}}">
+        <span>3</span><b>{{localize "NPCNamePortrait.StepCreate"}}</b>
+      </div>
+    </nav>
+  </header>
+
+  <main class="npc-wizard-body">
+    {{#if stepSource}}
+    <section class="npc-panel npc-source-step">
+      <div class="npc-panel-heading">
+        <h2>{{localize "NPCNamePortrait.SourceHeading"}}</h2>
+        <p>{{localize "NPCNamePortrait.SourceIntro"}}</p>
+      </div>
+
+      <div class="npc-source-grid">
+        <article class="npc-source-card">
+          <div class="npc-source-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div>
+            <h3>{{localize "NPCNamePortrait.SourceLocal"}}</h3>
+            <p>{{localize "NPCNamePortrait.PickFolderCompact"}}</p>
+          </div>
+          <button type="button" data-action="pickFolder">
+            <i class="fa-solid fa-folder-open"></i>
+            {{localize "NPCNamePortrait.PickFolder"}}
+          </button>
+        </article>
+
+        <article class="npc-source-card">
+          <div class="npc-source-icon"><i class="fa-solid fa-link"></i></div>
+          <div>
+            <h3>{{localize "NPCNamePortrait.SourceLink"}}</h3>
+            <p>{{localize "NPCNamePortrait.DirectoryLinkCompact"}}</p>
+          </div>
+          <input type="text" name="directoryLink" data-npc-directory-link
+                 value="{{directoryLink}}"
+                 placeholder="{{localize "NPCNamePortrait.DirectoryLinkPlaceholder"}}" />
+          <div class="npc-link-actions">
+            <button type="button" data-action="loadDirectoryLink">
+              <i class="fa-solid fa-images"></i>
+              {{localize "NPCNamePortrait.LoadDirectory"}}
+            </button>
+            <button type="button" data-action="browseFoundryFolder" class="npc-icon-button"
+                    title="{{localize "NPCNamePortrait.BrowseFoundry"}}">
+              <i class="fa-solid fa-folder-tree"></i>
+            </button>
+          </div>
+        </article>
+      </div>
+
+      {{#if entries.length}}
+      <div class="npc-existing-selection">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>{{localize "NPCNamePortrait.SelectionReady"}} <strong>{{entries.length}}</strong> — {{sourceLabel}}</span>
+        <button type="button" data-action="nextStep">{{localize "NPCNamePortrait.ContinueReview"}}</button>
+        <button type="button" data-action="clearList" class="npc-quiet-button">{{localize "NPCNamePortrait.ClearList"}}</button>
+      </div>
+      {{/if}}
+    </section>
+    <input type="file" data-npc-folder multiple webkitdirectory directory accept="image/*" hidden />
+    {{/if}}
+
+    {{#if stepReview}}
+    <section class="npc-panel npc-review-step">
+      <div class="npc-panel-heading npc-review-heading">
+        <div>
+          <h2>{{localize "NPCNamePortrait.ReviewHeading"}} <span>{{entries.length}}</span></h2>
+        </div>
+        <button type="button" data-action="editSource" class="npc-quiet-button">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          {{localize "NPCNamePortrait.ChangeSource"}}
+        </button>
+      </div>
+      <div class="npc-table-wrap">
+        <table class="npc-table">
+          <thead>
+            <tr>
+              <th>{{localize "NPCNamePortrait.ColPreview"}}</th>
+              <th>{{localize "NPCNamePortrait.ColFile"}}</th>
+              <th>{{localize "NPCNamePortrait.ColName"}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each entries}}
+            <tr data-entry-id="{{id}}">
+              <td class="npc-thumb-cell"><img class="npc-thumb" src="{{previewUrl}}" alt="" loading="lazy" /></td>
+              <td class="npc-file" title="{{fileName}}">{{fileName}}</td>
+              <td><input type="text" value="{{actorName}}" data-entry-id="{{id}}" data-action="editName" /></td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if stepCreate}}
+    <section class="npc-panel npc-create-step">
+      {{#if finished}}
+      <div class="npc-done-page">
+        <div class="npc-done-icon"><i class="fa-solid fa-check"></i></div>
+        <h2>{{localize "NPCNamePortrait.ImportDoneHeading"}}</h2>
+        <p>{{localize "NPCNamePortrait.ImportDoneDescription"}}</p>
+        <div class="npc-done-counts">
+          <div class="success">
+            <strong>{{completed}}</strong>
+            <span>{{localize "NPCNamePortrait.CreatedActors"}}</span>
+          </div>
+          {{#if failed}}
+          <div class="failed">
+            <strong>{{failed}}</strong>
+            <span>{{localize "NPCNamePortrait.FailedActors"}}</span>
+          </div>
+          {{/if}}
+        </div>
+        <div class="npc-done-template">
+          <i class="fa-solid fa-clone"></i>
+          <span>{{localize "NPCNamePortrait.CreatedFrom"}} <strong>{{templateName}}</strong></span>
+        </div>
+      </div>
+      {{else}}
+      <div class="npc-panel-heading">
+        <h2>{{#if busy}}{{localize "NPCNamePortrait.Creating"}}{{else}}{{localize "NPCNamePortrait.ReadyHeading"}}{{/if}}</h2>
+        <p>{{localize "NPCNamePortrait.ReadyDescription"}}</p>
+      </div>
+
+      <div class="npc-summary">
+        <div><span>{{localize "NPCNamePortrait.TemplateLabel"}}</span><strong>{{templateName}}</strong></div>
+        <div><span>{{localize "NPCNamePortrait.SourceSummary"}}</span><strong>{{sourceLabel}}</strong></div>
+        <div><span>{{localize "NPCNamePortrait.ActorCount"}}</span><strong>{{entries.length}}</strong></div>
+      </div>
+
+      <div class="npc-portrait-strip">
+        {{#each previewEntries}}
+        <figure><img src="{{previewUrl}}" alt="{{actorName}}" /><figcaption>{{actorName}}</figcaption></figure>
+        {{/each}}
+        {{#if remainingCount}}<div class="npc-more">+{{remainingCount}}</div>{{/if}}
+      </div>
+
+      {{#if busy}}
+      <div class="npc-progress">
+        <div class="npc-progress-track"><span data-npc-progress style="width: {{progressPercent}}%"></span></div>
+        <div class="npc-progress-copy" data-npc-status>{{statusText}}</div>
+      </div>
+      {{else}}
+        {{#if statusText}}<div class="npc-result" data-npc-status>{{statusText}}</div>{{/if}}
+      {{/if}}
+      {{/if}}
+    </section>
+    {{/if}}
+  </main>
+
+  <footer class="npc-wizard-footer">
+    <div class="npc-status" data-npc-status>{{statusText}}</div>
+    <div class="npc-footer-actions">
+      {{#if stepReview}}
+      <button type="button" data-action="previousStep" class="npc-secondary">
+        <i class="fa-solid fa-arrow-left"></i> {{localize "NPCNamePortrait.Back"}}
+      </button>
+      <button type="button" data-action="nextStep" class="npc-primary">
+        {{localize "NPCNamePortrait.Continue"}} <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      {{/if}}
+      {{#if stepCreate}}
+      {{#if finished}}
+      <button type="button" data-action="startOver" class="npc-secondary">
+        <i class="fa-solid fa-rotate"></i> {{localize "NPCNamePortrait.ImportAnother"}}
+      </button>
+      <button type="button" data-action="closeWindow" class="npc-primary">
+        <i class="fa-solid fa-check"></i> {{localize "NPCNamePortrait.DoneButton"}}
+      </button>
+      {{else}}
+      <button type="button" data-action="previousStep" class="npc-secondary" {{#if busy}}disabled{{/if}}>
+        <i class="fa-solid fa-arrow-left"></i> {{localize "NPCNamePortrait.Back"}}
+      </button>
+      <button type="button" data-action="createActors" class="npc-primary" {{#if busy}}disabled{{/if}}>
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        {{#if busy}}{{localize "NPCNamePortrait.Creating"}}{{else}}{{localize "NPCNamePortrait.Create"}}{{/if}}
+      </button>
+      {{/if}}
+      {{/if}}
+    </div>
+  </footer>
+</form>
